@@ -23,11 +23,12 @@ import pacman.game.internal.Node;
 
 public class FleeingGhost extends IndividualGhostController {
     public enum State {
-        SEARCH, HUNT, FLEE, LEAD
+        SEARCH, HUNT, FLEE, LEAD, DEFEND
     };
     private final static int PILL_PROXIMITY = 15;        //if Ms Pac-Man is this close to a power pill, back away
     private Random rnd = new Random();
     private int TICK_THRESHOLD;
+    private int DISTANCE_THRESHOLD;
     private int lastPacmanIndex = -1;
     private int tickSeen = -1;
     private Logger logger;
@@ -38,10 +39,11 @@ public class FleeingGhost extends IndividualGhostController {
     /*public FleeingGhost(Constants.GHOST ghost) {
         this(ghost, 5);
     }*/
-    public FleeingGhost(Constants.GHOST ghost, int TICK_THRESHOLD) {
+    public FleeingGhost(Constants.GHOST ghost, int TICK_THRESHOLD, int DISTANCE_THRESHOLD) {
         super(ghost);
         logger = LoggerFactory.getLogger(FleeingGhost.class);
         this.TICK_THRESHOLD = TICK_THRESHOLD;
+        this.DISTANCE_THRESHOLD = DISTANCE_THRESHOLD;
     }
 
     @Override
@@ -80,7 +82,12 @@ public class FleeingGhost extends IndividualGhostController {
             if(pacmanIndex != -1){
                 state = State.LEAD;
             }else {
-                state = State.HUNT;
+                if(huntChoice(game,currentIndex,DISTANCE_THRESHOLD)){
+                    state = State.HUNT;
+                }else{
+                    state = State.DEFEND;
+                }
+
             }
         }
         if(InDanger(game)){
@@ -89,11 +96,29 @@ public class FleeingGhost extends IndividualGhostController {
         switch (state) {
             case SEARCH:  return searchBehaviour(game,reqAction);
             case HUNT:  return huntBehaviour(game,messenger,lastPacmanIndex,reqAction);
+            case DEFEND: return defendBehaviour(game, reqAction, currentIndex);
             case LEAD:  return leadBehaviour(game,messenger,currentIndex,pacmanIndex,reqAction);
             default: return  fleeBehaviour(game,reqAction);
         }
 
     }
+    private  Constants.MOVE defendBehaviour(Game game, boolean reqAction, int currentIndex){
+        MasterIs = -1;
+        if(!reqAction){
+            return null;
+        }
+        int[] powerPills = game.getActivePowerPillsIndices();
+        int closestpill = game.getShortestPathDistance(powerPills[powerPills[0]], currentIndex);
+        for (int i = 0; i < powerPills.length; i++) {
+            int tmp = game.getShortestPathDistance(powerPills[i], currentIndex);
+            if(closestpill <  tmp){
+                closestpill = tmp;
+            }
+        }
+        return towards(game, closestpill);
+    }
+
+
     private Constants.MOVE searchBehaviour(Game game, boolean reqAction){
         MasterIs = -1;
         if(reqAction){
@@ -132,7 +157,7 @@ public class FleeingGhost extends IndividualGhostController {
             if(lastPacmanIndex != -1){
                 return awayfrom(game,lastPacmanIndex);
             }else{
-                return randomMove(game);
+                return randomMove(game); //TODO need a better idea here
             }
         }
         return null;
@@ -222,5 +247,17 @@ public class FleeingGhost extends IndividualGhostController {
             }
         }
         return false;
+    }
+
+    private Boolean huntChoice(Game game,int currentIndex,int DISTANCE_THRESHOLD){
+        int[] powerPills = game.getActivePowerPillsIndices();
+        if(game.getShortestPathDistance(currentIndex, lastPacmanIndex) > DISTANCE_THRESHOLD){
+            for (int i = 0; i < powerPills.length; i++) {
+                if (game.getShortestPathDistance(powerPills[i], currentIndex) < PILL_PROXIMITY) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

@@ -26,10 +26,10 @@ public class Main {
 
         EnumMap<GHOST, IndividualGhostController> controllers = new EnumMap<>(GHOST.class);
 
-        controllers.put(GHOST.INKY, new FleeingGhost(GHOST.INKY,200));
-        controllers.put(GHOST.BLINKY, new FleeingGhost(GHOST.BLINKY,200));
-        controllers.put(GHOST.PINKY, new FleeingGhost(GHOST.PINKY,200));
-        controllers.put(GHOST.SUE, new FleeingGhost(GHOST.SUE,200));
+        controllers.put(GHOST.INKY, new FleeingGhost(GHOST.INKY,200,20));
+        controllers.put(GHOST.BLINKY, new FleeingGhost(GHOST.BLINKY,200,20));
+        controllers.put(GHOST.PINKY, new FleeingGhost(GHOST.PINKY,200,20));
+        controllers.put(GHOST.SUE, new FleeingGhost(GHOST.SUE,200,20));
 
         executor.runGameTimed(new examples.StarterPacMan.MyPacMan(), new MASController(controllers));
     }
