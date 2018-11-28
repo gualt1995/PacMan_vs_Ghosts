@@ -24,7 +24,8 @@ import pacman.game.internal.Node;
 public class FleeingGhost extends IndividualGhostController {
     public enum State {
         SEARCH, HUNT, FLEE, LEAD, DEFEND
-    };
+    }
+
     private final static int PILL_PROXIMITY = 15;        //if Ms Pac-Man is this close to a power pill, back away
     private Random rnd = new Random();
     private int TICK_THRESHOLD;
@@ -49,14 +50,14 @@ public class FleeingGhost extends IndividualGhostController {
     @Override
     public Constants.MOVE getMove(Game game, long timeDue) {
         int currentTick = game.getCurrentLevelTime();
-        boolean reqAction = game.doesGhostRequireAction(ghost);;
+        boolean reqAction = game.doesGhostRequireAction(ghost);
         Messenger messenger = null;
         if (game.getMessenger() != null) {
              messenger = game.getMessenger();
         }
 
         flushMemory(currentTick);
-        int currentIndex = game.getGhostCurrentNodeIndex(ghost);;
+        int currentIndex = game.getGhostCurrentNodeIndex(ghost);
         int pacmanIndex = game.getPacmanCurrentNodeIndex();
         if (pacmanIndex != -1) {
             //System.out.println(ghost.name() + "sees the pacman");
@@ -213,7 +214,7 @@ public class FleeingGhost extends IndividualGhostController {
             }
             return move;
         }catch (NullPointerException e){
-            System.out.println("no path possible for " + ghost.name() + "while avoiding his master");
+//            System.out.println("no path possible for " + ghost.name() + "while avoiding his master");
             Constants.MOVE[] possibleMoves = game.getPossibleMoves(game.getGhostCurrentNodeIndex(ghost), game.getGhostLastMoveMade(ghost));
             return possibleMoves[rnd.nextInt(possibleMoves.length)];
         }

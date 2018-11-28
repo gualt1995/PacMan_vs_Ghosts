@@ -1,20 +1,12 @@
-
-import entrants.ghosts.username.*;
-
-
-import examples.StarterPacManOneJunction.MyPacMan;
+import entrants.ghosts.username.FleeingGhost;
 import pacman.Executor;
 import pacman.controllers.IndividualGhostController;
 import pacman.controllers.MASController;
-import pacman.controllers.examples.StarterPacMan;
-import pacman.game.Constants.*;
+import pacman.game.Constants.GHOST;
+import pacman.game.util.Stats;
 
 import java.util.EnumMap;
 
-
-/**
- * Created by pwillic on 06/05/2016.
- */
 public class Main {
 
     public static void main(String[] args) {
@@ -31,6 +23,10 @@ public class Main {
         controllers.put(GHOST.PINKY, new FleeingGhost(GHOST.PINKY,200,20));
         controllers.put(GHOST.SUE, new FleeingGhost(GHOST.SUE,200,20));
 
-        executor.runGameTimed(new examples.StarterPacMan.MyPacMan(), new MASController(controllers));
+        //executor.runGameTimed(new examples.StarterPacMan.MyPacMan(), new MASController(controllers));
+        Stats[] stats = executor.runExperiment(new examples.StarterPacMan.MyPacMan(), new MASController(controllers), 100, "PO");
+        for (Stats s : stats) {
+            System.out.println(s);
+        }
     }
 }
