@@ -23,10 +23,10 @@ public class Main {
         controllers.put(GHOST.PINKY, new FleeingGhost(GHOST.PINKY,200,20));
         controllers.put(GHOST.SUE, new FleeingGhost(GHOST.SUE,200,20));
 
-        //executor.runGameTimed(new examples.StarterPacMan.MyPacMan(), new MASController(controllers));
-        Stats[] stats = executor.runExperiment(new examples.StarterPacMan.MyPacMan(), new MASController(controllers), 100, "PO");
-        for (Stats s : stats) {
-            System.out.println(s);
-        }
+        executor.runGameTimed(new examples.StarterPacMan.MyPacMan(), new MASController(controllers));
+//        Stats[] stats = executor.runExperiment(new examples.StarterPacMan.MyPacMan(), new MASController(controllers), 100, "PO");
+//        for (Stats s : stats) {
+//            System.out.println(s);
+//        }
     }
 }
